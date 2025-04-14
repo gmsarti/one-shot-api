@@ -132,11 +132,11 @@ skips = ["B101"]  # Skip assert warnings
 asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "--cov=one_shot_api --cov-report=term-missing"
+addopts = "--cov=src/one_shot_api --cov-report=term-missing --cov-fail-under=80"
 
 [tool.coverage.run]
-source = ["one_shot_api"]
-omit = ["tests/*", "alembic/*"]
+source = ["src/one_shot_api"]
+omit = ["tests/*", "**/__init__.py"]
 
 [tool.coverage.report]
 exclude_lines = [
