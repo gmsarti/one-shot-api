@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="one-shot-api",
@@ -20,4 +20,4 @@ setup(
             "one-shot-api=one_shot_api.__main__:main",
         ],
     },
-) 
+)

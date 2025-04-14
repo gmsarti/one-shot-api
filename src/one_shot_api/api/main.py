@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from .routes import story
-from ..utils.config import settings
 
 app = FastAPI(
     title="One-Shot RPG Story Generator",
@@ -21,6 +21,7 @@ app.add_middleware(
 # Include routers
 app.include_router(story.router)
 
+
 @app.get("/")
 async def root():
     return {
@@ -28,6 +29,7 @@ async def root():
         "version": "0.1.0",
     }
 
+
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"} 
+    return {"status": "healthy"}

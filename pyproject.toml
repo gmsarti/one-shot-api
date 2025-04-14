@@ -11,6 +11,7 @@ dependencies = [
     "langchain>=0.3.0",
     "python-dotenv>=1.0.0",
     "pydantic>=2.0.0",
+    "pytest>=7.4.0",
 ]
 
 [build-system]
@@ -22,9 +23,55 @@ line-length = 88
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "W", "B", "UP", "PL", "RUF"]
-ignore = []
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "W",   # pycodestyle warnings
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+    "PL",  # pylint
+    "RUF", # ruff-specific rules
+    "C4",  # flake8-comprehensions
+    "T20", # flake8-print
+    "TID", # flake8-tidy-imports
+    "ARG", # flake8-unused-arguments
+    "PTH", # flake8-use-pathlib
+    "ERA", # eradicate
+    "PD",  # pandas-vet
+    "PGH", # pygrep-hooks
+    "RSE", # flake8-raise
+    "RET", # flake8-return
+    "SLF", # flake8-self
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TRY", # tryceratops
+    "FBT", # flake8-boolean-trap
+    "C90", # mccabe
+]
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+    "TID252", # relative imports
+    "PTH120", # os.path usage
+    "PTH100", # os.path usage
+    "ERA001", # commented out code
+    "W293",   # blank line contains whitespace
+    "TRY300", # else block suggestion
+    "RET504", # unnecessary assignment
+    "B904",   # raise from suggestion
+]
 
 [tool.ruff.format]
 quote-style = "double"
-indent-style = "space" 
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]  # Allow use of assert in tests
+"**/__init__.py" = ["F401"]  # Allow unused imports in __init__.py files
+"alembic/*" = ["ERA001", "PTH120", "PTH100"]  # Allow commented code and os.path usage in alembic files
+
+[tool.ruff.lint.isort]
+known-first-party = ["one_shot_api"]
