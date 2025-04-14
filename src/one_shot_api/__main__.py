@@ -1,5 +1,11 @@
-from .api.main import app
 import uvicorn
 
+from .utils.config import settings
+
 if __name__ == "__main__":
-    uvicorn.run("one_shot_api.api.main:app", host="0.0.0.0", port=8001, reload=True) 
+    uvicorn.run(
+        "one_shot_api.api.main:app",
+        host=settings.API_HOST,
+        port=settings.API_PORT,
+        reload=True,
+    )
