@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     DB_NAME: str = os.getenv("DB_NAME", "one_shot_api")
 
     # Story Generation Defaults
-    DEFAULT_RPG_SYSTEM: str = os.getenv("DEFAULT_RPG_SYSTEM", "D&D 5e")
-    DEFAULT_STORY_LENGTH: str = os.getenv("DEFAULT_STORY_LENGTH", "medium")
+    DEFAULT_RPG_SYSTEM: str = os.getenv("DEFAULT_RPG_SYSTEM", "custom")
+    DEFAULT_STORY_LENGTH: str = os.getenv("DEFAULT_STORY_LENGTH", "short")
     DEFAULT_THEME: str = os.getenv("DEFAULT_THEME", "fantasy")
 
     class Config:
