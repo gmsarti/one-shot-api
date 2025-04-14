@@ -10,7 +10,7 @@ from ..models.story import StoryRequest, StoryResponse
 
 
 class StoryGenerator:
-    def __init__(self, openai_api_key: str):
+    def __init__(self, openai_api_key: str) -> None:
         self.llm = ChatOpenAI(
             model="gpt-4-turbo-preview", temperature=0.7, api_key=openai_api_key
         )
@@ -149,3 +149,8 @@ class StoryGenerator:
         db_story = await self.save_to_database(story_response, request, keywords, db)
 
         return db_story
+
+    def _parse_story_parts(self, story_text: str) -> list[str]:
+        # Split the story into parts based on newlines and filter out empty lines
+        story_parts = [part.strip() for part in story_text.split("\n") if part.strip()]
+        return story_parts

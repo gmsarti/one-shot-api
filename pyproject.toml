@@ -14,6 +14,18 @@ dependencies = [
     "pytest>=7.4.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.23.0",
+    "mypy>=1.9.0",
+    "ruff>=0.11.0",
+    "pre-commit>=3.6.0",
+    "black>=24.0.0",
+    "types-all>=1.0.0",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -61,6 +73,8 @@ ignore = [
     "TRY300", # else block suggestion
     "RET504", # unnecessary assignment
     "B904",   # raise from suggestion
+    "PGH003", # type ignore comments
+    "ARG001", # unused arguments
 ]
 
 [tool.ruff.format]
@@ -71,7 +85,41 @@ line-ending = "auto"
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]  # Allow use of assert in tests
 "**/__init__.py" = ["F401"]  # Allow unused imports in __init__.py files
-"alembic/*" = ["ERA001", "PTH120", "PTH100"]  # Allow commented code and os.path usage in alembic files
+"alembic/*" = ["ERA001", "PTH120", "PTH100", "PGH003", "ARG001"]  # Allow commented code and os.path usage in alembic files
+"src/one_shot_api/api/*" = ["PGH003", "ARG001"]  # Allow type ignores and unused args in API routes
 
 [tool.ruff.lint.isort]
 known-first-party = ["one_shot_api"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = false  # Allow Any return types
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = false  # Allow unused type ignores
+warn_no_return = true
+warn_unreachable = true
+strict_optional = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[[tool.mypy.overrides]]
+module = "alembic.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+warn_unused_ignores = false
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = "src.one_shot_api.api.*"
+disallow_untyped_defs = false
+warn_unused_ignores = false
+warn_return_any = false
