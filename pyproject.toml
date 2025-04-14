@@ -123,3 +123,7 @@ module = "src.one_shot_api.api.*"
 disallow_untyped_defs = false
 warn_unused_ignores = false
 warn_return_any = false
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]  # Skip assert warnings
