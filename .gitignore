@@ -33,6 +33,12 @@ ENV/
 *.swp
 *.swo
 
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
 # Database
 *.db
 *.sqlite3
