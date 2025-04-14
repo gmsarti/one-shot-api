@@ -2,7 +2,7 @@ import json
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import ChatPromptTemplate
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from sqlalchemy.orm import Session
 
 from ..models.database import Keyword, Story
@@ -12,7 +12,9 @@ from ..models.story import StoryRequest, StoryResponse
 class StoryGenerator:
     def __init__(self, openai_api_key: str) -> None:
         self.llm = ChatOpenAI(
-            model="gpt-4-turbo-preview", temperature=0.7, api_key=openai_api_key
+            model="gpt-4-mini",
+            temperature=0.7,
+            openai_api_key=openai_api_key,
         )
         self.parser = PydanticOutputParser(pydantic_object=StoryResponse)
 
