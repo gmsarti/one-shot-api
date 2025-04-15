@@ -10,7 +10,7 @@ from ...models.story import StoryRequest, StoryResponse
 from ...utils.config import settings
 from ...utils.database import get_db
 
-router = APIRouter(prefix="/stories", tags=["stories"])
+router = APIRouter(tags=["stories"])
 
 
 @router.post("/generate", response_model=StoryResponse)

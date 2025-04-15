@@ -17,7 +17,7 @@ def test_root() -> None:
     response = client.get("/")
     assert response.status_code == HTTP_STATUS_OK
     assert response.json() == {
-        "message": "Welcome to the One-Shot RPG Story Generator API",
+        "message": "Welcome to the One-Shot RPG Story Generator API.\nCreate a one-shot!",
         "version": "0.1.0",
     }
 
