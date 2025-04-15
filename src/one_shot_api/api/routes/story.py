@@ -1,6 +1,7 @@
 import json
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from ...agents.story_generator import StoryGenerator
@@ -9,7 +10,7 @@ from ...models.story import StoryRequest, StoryResponse
 from ...utils.config import settings
 from ...utils.database import get_db
 
-router = APIRouter(prefix="/stories", tags=["stories"])
+router = APIRouter(tags=["stories"])
 
 
 @router.post("/generate", response_model=StoryResponse)
@@ -33,22 +34,35 @@ async def generate_story(
             items=json.loads(story.items),
             estimated_duration=story.estimated_duration,
         )
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e!s}")
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=500, detail=f"Invalid JSON data: {e!s}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate story: {e!s}")
 
 
 @router.get("/{story_id}", response_model=StoryResponse)
 async def get_story(story_id: int, db: Session = Depends(get_db)) -> StoryResponse:
-    story = db.query(Story).filter(Story.id == story_id).first()
-    if not story:
-        raise HTTPException(status_code=404, detail="Story not found")
+    try:
+        story = db.query(Story).filter(Story.id == story_id).first()
+        if not story:
+            raise HTTPException(status_code=404, detail="Story not found")
 
-    return StoryResponse(
-        title=story.title,
-        summary=story.summary,
-        plot_points=json.loads(story.plot_points),
-        characters=json.loads(story.characters),
-        locations=json.loads(story.locations),
-        items=json.loads(story.items),
-        estimated_duration=story.estimated_duration,
-    )
+        return StoryResponse(
+            title=story.title,
+            summary=story.summary,
+            plot_points=json.loads(story.plot_points),
+            characters=json.loads(story.characters),
+            locations=json.loads(story.locations),
+            items=json.loads(story.items),
+            estimated_duration=story.estimated_duration,
+        )
+    except HTTPException:
+        raise
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e!s}")
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=500, detail=f"Invalid JSON data: {e!s}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get story: {e!s}")

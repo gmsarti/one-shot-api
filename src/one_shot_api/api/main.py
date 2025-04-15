@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .routes import story
+from .routes import story_router
 
 app = FastAPI(
     title="One-Shot RPG Story Generator",
@@ -19,23 +19,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Include routers
-def setup_routes() -> None:
-    app.include_router(
-        story.router,
-        prefix="/api/v1/stories",
-        tags=["stories"],
-    )
-
-
-setup_routes()
+app.include_router(story_router, prefix="/api/v1", tags=["stories"])
 
 
 @app.get("/")
 async def root() -> dict[str, str]:
     return {
-        "message": "Welcome to the One-Shot RPG Story Generator API",
+        "message": "Welcome to the One-Shot RPG Story Generator API.\nCreate a one-shot!",
         "version": "0.1.0",
     }
 
