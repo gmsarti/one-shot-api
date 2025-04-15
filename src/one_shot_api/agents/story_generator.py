@@ -16,7 +16,9 @@ class StoryGenerator:
             temperature=0.7,
             openai_api_key=openai_api_key,
         )
-        self.parser = PydanticOutputParser(pydantic_object=StoryResponse)
+        self.parser: PydanticOutputParser[StoryResponse] = PydanticOutputParser(
+            pydantic_object=StoryResponse
+        )
 
     async def extract_keywords(self, story: StoryResponse) -> list[str]:
         prompt = ChatPromptTemplate.from_messages(
@@ -46,18 +48,23 @@ class StoryGenerator:
         response = await (prompt | self.llm).ainvoke({})
         try:
             # Try to parse the response as JSON
-            keywords = json.loads(response.content)
-            if isinstance(keywords, list):
-                return keywords
+            content = response.content
+            if isinstance(content, str):
+                keywords = json.loads(content)
+                if isinstance(keywords, list):
+                    return [str(k) for k in keywords]
             return []
         except json.JSONDecodeError:
             # If parsing fails, try to extract array-like content
-            content = response.content.strip()
-            if content.startswith("[") and content.endswith("]"):
-                try:
-                    return json.loads(content)
-                except json.JSONDecodeError:
-                    return []
+            if isinstance(content, str):
+                content = content.strip()
+                if content.startswith("[") and content.endswith("]"):
+                    try:
+                        keywords = json.loads(content)
+                        if isinstance(keywords, list):
+                            return [str(k) for k in keywords]
+                    except json.JSONDecodeError:
+                        pass
             return []
 
     async def save_to_database(
@@ -71,16 +78,20 @@ class StoryGenerator:
         db_story = Story(
             title=story.title,
             summary=story.summary,
-            plot_points=json.dumps(story.plot_points),
-            characters=json.dumps(story.characters),
-            locations=json.dumps(story.locations),
-            items=json.dumps(story.items),
+            plot_points=json.dumps(list(story.plot_points)),
+            characters=json.dumps(list(story.characters)),
+            locations=json.dumps(list(story.locations)),
+            items=json.dumps(list(story.items)),
             estimated_duration=story.estimated_duration,
             rpg_system=request.rpg_system,
             theme=request.theme,
             player_count=request.player_count,
             complexity=request.complexity,
         )
+
+        # Add story to session
+        db.add(db_story)
+        db.flush()  # Flush to get the story ID
 
         # Add keywords
         for keyword_text in keywords:
@@ -91,9 +102,9 @@ class StoryGenerator:
                 db.add(keyword)
                 db.flush()
 
+            # Associate keyword with story
             db_story.keywords.append(keyword)
 
-        db.add(db_story)
         db.commit()
         db.refresh(db_story)
         return db_story
@@ -152,7 +163,7 @@ class StoryGenerator:
 
         return db_story
 
-    def _parse_story_parts(self, story_text: str) -> list[str]:
+    def parse_story_parts(self, story_text: str) -> list[str]:
         # Split the story into parts based on newlines and filter out empty lines
         story_parts = [part.strip() for part in story_text.split("\n") if part.strip()]
         return story_parts
