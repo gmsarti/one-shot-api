@@ -12,7 +12,7 @@ from ..models.story import StoryRequest, StoryResponse
 class StoryGenerator:
     def __init__(self, openai_api_key: str) -> None:
         self.llm = ChatOpenAI(
-            model="gpt-4-mini",
+            model="gpt-4.1-nano",
             temperature=0.7,
             openai_api_key=openai_api_key,
         )
