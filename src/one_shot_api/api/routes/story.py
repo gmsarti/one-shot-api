@@ -17,6 +17,25 @@ router = APIRouter(tags=["stories"])
 async def generate_story(
     request: StoryRequest, db: Session = Depends(get_db)
 ) -> StoryResponse:
+    """Generate a new RPG one-shot story based on the provided parameters.
+
+    This endpoint creates a new story using the StoryGenerator agent and saves it
+    to the database. The story is generated based on the provided RPG system,
+    theme, player count, and complexity parameters.
+
+    Args:
+        request (StoryRequest): The story generation request containing parameters
+        db (Session): Database session (automatically injected)
+
+    Returns:
+        StoryResponse: The generated story with all its components
+
+    Raises:
+        HTTPException: If OpenAI API key is not configured
+        HTTPException: If there's a database error
+        HTTPException: If there's an error in JSON processing
+        HTTPException: If story generation fails
+    """
     if not settings.OPENAI_API_KEY:
         raise HTTPException(status_code=500, detail="OpenAI API key not configured")
 
@@ -44,6 +63,24 @@ async def generate_story(
 
 @router.get("/{story_id}", response_model=StoryResponse)
 async def get_story(story_id: int, db: Session = Depends(get_db)) -> StoryResponse:
+    """Retrieve a previously generated story by its ID.
+
+    This endpoint fetches a story from the database and returns it in the
+    StoryResponse format. The story must exist in the database.
+
+    Args:
+        story_id (int): The ID of the story to retrieve
+        db (Session): Database session (automatically injected)
+
+    Returns:
+        StoryResponse: The requested story with all its components
+
+    Raises:
+        HTTPException: If the story is not found
+        HTTPException: If there's a database error
+        HTTPException: If there's an error in JSON processing
+        HTTPException: If story retrieval fails
+    """
     try:
         story = db.query(Story).filter(Story.id == story_id).first()
         if not story:

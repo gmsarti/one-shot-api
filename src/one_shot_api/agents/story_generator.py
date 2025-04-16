@@ -10,7 +10,24 @@ from ..models.story import StoryRequest, StoryResponse
 
 
 class StoryGenerator:
+    """A class responsible for generating RPG one-shot stories using OpenAI's GPT models.
+
+    This class handles the entire story generation process, including:
+    - Generating story content using GPT models
+    - Extracting keywords from generated stories
+    - Saving stories and keywords to the database
+
+    Attributes:
+        llm (ChatOpenAI): The language model used for story generation
+        parser (PydanticOutputParser): Parser for converting model output to StoryResponse objects
+    """
+
     def __init__(self, openai_api_key: str) -> None:
+        """Initialize the StoryGenerator with OpenAI API key.
+
+        Args:
+            openai_api_key (str): The OpenAI API key for authentication
+        """
         self.llm = ChatOpenAI(
             model="gpt-4.1-nano",
             temperature=0.7,
@@ -21,6 +38,18 @@ class StoryGenerator:
         )
 
     async def extract_keywords(self, story: StoryResponse) -> list[str]:
+        """Extract relevant keywords from a generated story.
+
+        Uses GPT to analyze the story content and extract important keywords for
+        searching and categorization. Keywords focus on themes, locations, character
+        types, and important items.
+
+        Args:
+            story (StoryResponse): The generated story to extract keywords from
+
+        Returns:
+            list[str]: A list of extracted keywords
+        """
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -74,6 +103,20 @@ class StoryGenerator:
         keywords: list[str],
         db: Session,
     ) -> Story:
+        """Save a generated story and its keywords to the database.
+
+        Creates a new story record in the database and associates it with
+        extracted keywords. If keywords don't exist, they are created.
+
+        Args:
+            story (StoryResponse): The generated story to save
+            request (StoryRequest): The original story generation request
+            keywords (list[str]): List of keywords extracted from the story
+            db (Session): Database session
+
+        Returns:
+            Story: The saved story database record
+        """
         # Create story record
         db_story = Story(
             title=story.title,
@@ -110,6 +153,23 @@ class StoryGenerator:
         return db_story
 
     async def generate_story(self, request: StoryRequest, db: Session) -> Story:
+        """Generate a complete RPG one-shot story based on the request parameters.
+
+        This is the main method that orchestrates the story generation process:
+        1. Generates the story content using GPT
+        2. Extracts keywords from the generated story
+        3. Saves the story and keywords to the database
+
+        Args:
+            request (StoryRequest): The story generation request containing parameters
+            db (Session): Database session
+
+        Returns:
+            Story: The saved story database record
+
+        Raises:
+            ValueError: If the generated story content is invalid
+        """
         prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -164,6 +224,17 @@ class StoryGenerator:
         return db_story
 
     def parse_story_parts(self, story_text: str) -> list[str]:
+        """Parse a story text into individual plot points.
+
+        Splits the story text into parts based on newlines and filters out
+        empty lines to create a list of plot points.
+
+        Args:
+            story_text (str): The complete story text to parse
+
+        Returns:
+            list[str]: List of individual plot points
+        """
         # Split the story into parts based on newlines and filter out empty lines
         story_parts = [part.strip() for part in story_text.split("\n") if part.strip()]
         return story_parts
