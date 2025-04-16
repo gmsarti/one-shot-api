@@ -1,8 +1,13 @@
-from fastapi import FastAPI, Request
+import psutil
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy import text
+from sqlalchemy.orm import Session
 
-from .routes import story_router
+from one_shot_api.utils.database import get_db
+
+from .routes.story import router as story_router
 
 app = FastAPI(
     title="One-Shot RPG Story Generator",
@@ -39,6 +44,35 @@ async def generic_exception_handler(_: Request, exc: Exception) -> JSONResponse:
     )
 
 
-@app.get("/health")  # type: ignore[misc]
-async def health_check() -> dict[str, str]:
-    return {"status": "healthy"}
+@app.get("/health")
+async def health_check(db: Session = Depends(get_db)):
+    try:
+        # Check database connectivity
+        db.execute(text("SELECT 1"))
+        db_status = "healthy"
+    except Exception as e:
+        db_status = f"unhealthy: {str(e)}"
+
+    # Get system metrics
+    memory = psutil.virtual_memory()
+    disk = psutil.disk_usage("/")
+
+    return {
+        "status": "healthy",
+        "version": "0.1.0",
+        "database": {"status": db_status},
+        "system": {
+            "memory": {
+                "total": memory.total,
+                "available": memory.available,
+                "used": memory.used,
+                "percent": memory.percent,
+            },
+            "disk": {
+                "total": disk.total,
+                "used": disk.used,
+                "free": disk.free,
+                "percent": disk.percent,
+            },
+        },
+    }

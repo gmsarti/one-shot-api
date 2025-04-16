@@ -24,13 +24,16 @@ class Settings(BaseSettings):
     DB_HOST: str = os.getenv("DB_HOST", "localhost")
     DB_PORT: str = os.getenv("DB_PORT", "5432")
     DB_NAME: str = os.getenv("DB_NAME", "one_shot_api")
+    DATABASE_URL: str = (
+        f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
     # Story Generation Defaults
     DEFAULT_RPG_SYSTEM: str = os.getenv("DEFAULT_RPG_SYSTEM", "custom")
     DEFAULT_STORY_LENGTH: str = os.getenv("DEFAULT_STORY_LENGTH", "short")
     DEFAULT_THEME: str = os.getenv("DEFAULT_THEME", "fantasy")
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
 settings = Settings()
