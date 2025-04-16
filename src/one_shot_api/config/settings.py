@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     API_PORT: int = 8000
     DEBUG: bool = True
 
+    # Logging Settings
+    LOG_LEVEL: str = "INFO"
+    LOG_JSON_FORMAT: bool = True
+    LOG_DIR: str = "logs"
+
     # Database Settings
     DB_USER: str
     DB_PASSWORD: str
