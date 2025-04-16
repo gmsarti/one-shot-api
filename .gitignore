@@ -20,6 +20,13 @@ wheels/
 .installed.cfg
 *.egg
 
+# Cache directories
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
 # Virtual Environment
 .env
 .venv
@@ -34,9 +41,6 @@ ENV/
 *.swo
 
 # Testing
-.coverage
-htmlcov/
-.pytest_cache/
 .tox/
 
 # Database
