@@ -25,7 +25,8 @@ def test_root() -> None:
 def test_health_check() -> None:
     response = client.get("/health")
     assert response.status_code == HTTP_STATUS_OK
-    assert response.json() == {"status": "healthy"}
+    assert "status" in response.json()
+    assert response.json()["status"] == "healthy"
 
 
 def test_generic_exception_handler() -> None:

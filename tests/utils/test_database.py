@@ -62,29 +62,34 @@ def test_get_db_with_different_config():
         mock_settings.DB_HOST = "test_host"
         mock_settings.DB_PORT = "5432"
         mock_settings.DB_NAME = "test_db"
+        mock_settings.DATABASE_URL = (
+            "postgresql://test_user:test_password@test_host:5432/test_db"
+        )
 
         # Mock session
         mock_session = MagicMock(spec=Session)
         mock_sessionmaker_instance = MagicMock(return_value=mock_session)
+        mock_engine.return_value = MagicMock()
 
-        with (
-            patch(
-                "one_shot_api.utils.database.sessionmaker",
-                return_value=mock_sessionmaker_instance,
-            ),
-            patch("one_shot_api.utils.database._engine", None),
-            patch("one_shot_api.utils.database._SessionLocal", None),
+        with patch(
+            "one_shot_api.utils.database.sessionmaker",
+            return_value=mock_sessionmaker_instance,
         ):
             # Test the generator
             db_gen = get_db()
-            next(db_gen)
+            db = next(db_gen)
 
-            # Verify the engine was created with the correct URL
-            mock_engine.assert_called_once()
+            # Verify the session was created with the correct configuration
+            assert isinstance(db, Session)
+            mock_engine.assert_called_once_with(mock_settings.DATABASE_URL)
+            mock_sessionmaker_instance.assert_called_once()
 
             # Finish the generator
             with suppress(StopIteration):
                 next(db_gen)
+
+            # Verify close was called
+            mock_session.close.assert_called_once()
 
 
 def test_get_db_session_scope():
