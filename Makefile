@@ -45,7 +45,7 @@ clean:
 
 run:
 	pip install -e .
-	uvicorn one_shot_api.api.main:app --reload --host 0.0.0.0 --port 8000 --log-level debug
+	uvicorn one_shot_api.api.main:app --reload --host 127.0.0.1 --port 8000 --log-level debug
 
 migrate:
 	alembic upgrade head

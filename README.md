@@ -53,7 +53,7 @@ createdb -O postgres one_shot_api
 5. Create a `.env` file with your configuration:
 ```env
 # API Configuration
-API_HOST=0.0.0.0
+API_HOST=127.0.0.1
 API_PORT=8001
 DEBUG=True
 
@@ -489,7 +489,7 @@ LOG_LEVEL=DEBUG
 LOG_JSON_FORMAT=False
 
 # API Configuration
-API_HOST=0.0.0.0
+API_HOST=127.0.0.1
 API_PORT=8001
 
 # Database Configuration (Development)
@@ -505,7 +505,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 5. Start the development server with hot-reload:
 ```bash
-uvicorn one_shot_api.main:app --reload --host 0.0.0.0 --port 8001
+uvicorn one_shot_api.main:app --reload --host 127.0.0.1 --port 8001
 ```
 
 ### Docker Development

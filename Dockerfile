@@ -51,4 +51,4 @@ USER appuser
 EXPOSE 8000
 
 # Run the application
-CMD ["uvicorn", "one_shot_api.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "one_shot_api.api.main:app", "--host", "127.0.0.1", "--port", "8000"]
