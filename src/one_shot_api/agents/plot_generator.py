@@ -68,7 +68,7 @@ def determine_power_level(
     if power_level is not None:
         return {**state, "power_level": power_level}
 
-    return {**state, "power_level": random.choice(list(PowerLevel))}
+    return {**state, "power_level": random.choice(list(PowerLevel)).value}
 
 
 def determine_setting(
@@ -78,7 +78,7 @@ def determine_setting(
     if setting is not None:
         return {**state, "setting": setting}
 
-    return {**state, "setting": random.choice(list(SettingType))}
+    return {**state, "setting": random.choice(list(SettingType)).value}
 
 
 def determine_tone(state: StoryState, tone: Optional[ToneType] = None) -> StoryState:
@@ -86,7 +86,7 @@ def determine_tone(state: StoryState, tone: Optional[ToneType] = None) -> StoryS
     if tone is not None:
         return {**state, "tone": tone}
 
-    return {**state, "tone": random.choice(list(ToneType))}
+    return {**state, "tone": random.choice(list(ToneType)).value}
 
 
 def determine_region(state: StoryState) -> StoryState:
@@ -294,12 +294,12 @@ if __name__ == "__main__":
     print(f"Power Level: {result['power_level']}")
     print(f"Setting: {result['setting']}")
     print(f"Tone: {result['tone']}")
-    print(f"Region: {result['region']}")
-    print(f"Main Location: {result['main_location']}")
-    print(f"Adversary: {result['adversary']}")
-    print(f"Adversary's Minions: {result['adversary_minions']}")
-    print(f"Third Party: {result['third_party']}")
-    print(f"Reward: {result['reward']}")
+    print(f"\n\nRegion: {result['region']}")
+    print(f"\nMain Location: {result['main_location']}")
+    print(f"\n\nAdversary: {result['adversary']}")
+    print(f"\nAdversary's Minions: {result['adversary_minions']}")
+    print(f"\n\nThird Party: {result['third_party']}")
+    print(f"\n\nReward: {result['reward']}")
     print("\nPlot:")
     print("-" * 50)
     print(result["plot"])
